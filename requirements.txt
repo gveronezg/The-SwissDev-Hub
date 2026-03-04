@@ -1,0 +1,5 @@
+# fastapi é o framework para criar a API
+fastapi
+
+# uvicorn é o servidor que vai rodar a API
+uvicorn
