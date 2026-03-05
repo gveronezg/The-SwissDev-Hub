@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <title>Criar Pedido</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>Criar Pedido</h1>
+    <div id="pedido">
+
+        <label>Selecione o produto que deseja adicionar ao seu pedido:</label>
+        <select name="produto" id="produto">
+            <option value="Batata de Costela">Batata de Costela</option>
+            <option value="Batata de Frango">Batata de Frango</option>
+        </select><br><br>
+
+        <label>Qual a quantidade desejada do produto acima?</label>
+        <button type="button" id="diminuir">-</button>
+        <input type="number" id="quantidade" name="quantidade" value="1" readonly>
+        <button type="button" id="aumentar">+</button><br><br>
+
+        <button type="button" id="adicionar">Adicionar ao pedido!</button><br><br>
+
+        <div id="sacola_de_compras">
+            <h3>Itens no Pedido:</h3>
+            <ul id="itens_adicionados">
+                <li id="costela"><span id="qtd-costela">0</span>x Batata de Costela</li>
+                <li id="frango"><span id="qtd-frango">0</span>x Batata de Frango</li>
+            </ul>
+        </div>
+
+        <label>Endereço:</label>
+        <input type="text" id="endereco" name="endereco"><br><br>
+
+        <label>Contato:</label>
+        <input type="text" id="contato" name="contato"><br><br>
+
+        <input type="submit" value="Criar Pedido">
+
+        </form>
+
+        <script src="/static/script.js"></script>
+</body>
+
+</html>
