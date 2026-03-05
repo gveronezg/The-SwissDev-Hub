@@ -25,4 +25,5 @@ def criar_pedido():
 @app.post("/pedido")
 def lancar_pedido(pedido: Pedido):
     pedidos_recebidos.append(pedido)
+    print(pedidos_recebidos)
     return pedido
