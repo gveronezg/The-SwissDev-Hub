@@ -25,13 +25,20 @@
         <div id="sacola_de_compras">
             <h3>Itens no Pedido:</h3>
             <ul id="itens_adicionados">
-                <li id="costela"><span id="qtd-costela">0</span>x Batata de Costela</li>
-                <li id="frango"><span id="qtd-frango">0</span>x Batata de Frango</li>
+                <li id="costela"><span id="qtd-costela">0</span>x Batata de Costela = R$ <span
+                        id="total-costela">0</span></li>
+                <li id="frango"><span id="qtd-frango">0</span>x Batata de Frango = R$ <span id="total-frango">0</span>
+                </li>
             </ul>
         </div>
 
-        <label>Endereço:</label>
-        <input type="text" id="endereco" name="endereco"><br><br>
+        <input type="checkbox" id="entrega_off"><label>Retirar na Loja!</label><br><br>
+
+        <div id="receber">
+            <label>Entrega = R$ 10,00</label><br>
+            <label>Endereço:</label>
+            <input type="text" id="endereco" name="endereco"><br><br>
+        </div>
 
         <label>Contato:</label>
         <input type="text" id="contato" name="contato"><br><br>

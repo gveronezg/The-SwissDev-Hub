@@ -3,3 +3,9 @@ fastapi
 
 # uvicorn é o servidor que vai rodar a API
 uvicorn
+
+# httpx é o cliente que vai enviar a requisição para o Discord
+httpx
+
+#  
+dotenv
