@@ -32,7 +32,6 @@ def criar_pedido():
 
 @app.get("/pedidos")
 def visualizar_pedidos():
-    # O 'with' é usado para garantir que o arquivo seja fechado logo após a leitura evitando erros de memória
     with open("static/manejar_pedidos.html", "r", encoding="utf-8") as html:
         conteudo = html.read()
         return HTMLResponse(content=conteudo)
