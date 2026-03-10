@@ -8,11 +8,14 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
     *   Interface responsiva com manipulação de DOM via **Vanilla JS**.
     *   Gestão de estado client-side para cálculos em tempo real e validação de regras de negócio.
     *   Comunicação assíncrona com a API utilizando a **Fetch API**.
+    *   Criação de Dashboards Administrativos isolados para gestão e monitoramento de pedidos.
+    *   Uso de funções de alta ordem (Map/Join) para transformar dados complexos em interfaces legíveis.
 
 *   **Backend (FastAPI):** 
     *   Criação de API RESTful de alta performance com tipagem rigorosa via **Pydantic**.
     *   Arquitetura modularizada (Separation of Concerns) separando modelos, rotas e banco de dados.
     *   Servidor ASGI configurado com **Uvicorn** para suporte a concorrência.
+    *   Desenvolvimento de rotas de leitura (Read) , atualização (Update) e exclusão (Delete) seguindo o padrão RESTful.
 
 *   **Persistência (SQLite):** 
     *   Implementação de banco de dados relacional com **SQL parametrizado** (blindagem contra SQL Injection).
@@ -32,4 +35,4 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
 *   **Tratamento de Exceções:** Uso de blocos `try/except` para garantir a resiliência da API em casos de falhas externas.
 *   **Código Limpo (Clean Code):** Nomenclatura semântica de variáveis e funções, visando legibilidade e manutenção.
 *   **Controle de Execução:** Implementação do padrão `if __name__ == "__main__":` para controle fino de inicialização de scripts.
-*   **Gestão de Dependências:** Projeto estruturado com [requirements.txt](cci:7://file:///f:/Projetos_SSD_Velocidade_Github/The-SwissDev-Hub/requirements.txt:0:0-0:0) e ambiente virtual (`.venv`).
+*   **Gestão de Dependências:** Projeto estruturado com pré requisítos (requirements.txt) e ambiente virtual (.venv).
