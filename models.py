@@ -1,6 +1,6 @@
 # lib para fazer a validação dos dados json recebidos
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class ItemPedido(BaseModel):
@@ -9,6 +9,7 @@ class ItemPedido(BaseModel):
 
 
 class Pedido(BaseModel):
+    id: Optional[int] = None
     itens: List[ItemPedido]
     endereco: str
     contato: str
