@@ -65,7 +65,7 @@ btnEnviar.onclick = async () => {
     }
     if (itensDoPedido.length === 0) { alert("Sua sacola está vazia!"); return; }
 
-    resumoItens = ""
+    let resumoItens = ""
     for (const item of itensDoPedido) {
         resumoItens += `${item.quantidade}x ${item.produto}\n`
     }
