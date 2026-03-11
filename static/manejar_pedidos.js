@@ -73,13 +73,77 @@ async function editarPedido(id) {
     if (pedido) {
         // Preenche o formulário de edição com os dados reais
         document.getElementById('id').value = pedido.id;
-        for (let i = 0; i < pedido.itens.length; i++) {
-            if (pedido.itens[i].quantidade > 1) {
-                document.getElementById('item').value = pedido.itens[i].produto;
-                document.getElementById('qtd').value = pedido.itens[i].quantidade;
-            }
-        }
         document.getElementById('endereco').value = pedido.endereco;
+        document.getElementById('contato').value = pedido.contato;
         document.getElementById('total').value = pedido.total;
+
+        // cria e limpa o container de itens do pedido
+        const ItensDoPedido = document.getElementById('itens_do_pedido');
+        ItensDoPedido.innerHTML = "";
+
+        // Recria os campos de item e quantidade
+        pedido.itens.forEach(item => {
+            const divItem = document.createElement("div");
+            divItem.innerHTML = `
+                <input type="number" value="${item.quantidade}" min="0">
+                <label> x </label>
+                <input type="text" value="${item.produto}" readonly><br><br>
+            `;
+            ItensDoPedido.appendChild(divItem);
+        });
     }
+}
+
+const mapeamento = {
+    "Batata de Costela": { qtdId: "qtd-costela", totalId: "total-costela", preco: 40.0 },
+    "Batata de Frango": { qtdId: "qtd-frango", totalId: "total-frango", preco: 35.0 }
+};
+
+// 6. Função para atualizar o bd
+async function atualizarPedido() {
+    // Obtem o id do pedido
+    const id = document.getElementById('id').value;
+
+    // Obtem todas as quantidades e itens atualizados
+    const qtds = document.querySelectorAll('#itens_do_pedido input[type="number"]');
+    const itens = document.querySelectorAll('#itens_do_pedido input[type="text"]');
+
+    // Cria uma lista com os itens atualizados
+    const itensAtualizados = [];
+    for (let i = 0; i < qtds.length; i++) {
+        itensAtualizados.push({
+            produto: itens[i].value,
+            quantidade: parseInt(qtds[i].value)
+        });
+    }
+
+    let total = 0;
+    // Adiciona o valor da taxa de entrega se o endereço não for "RETIRADA"
+    const entrega = document.getElementById('endereco');
+    if (entrega.value !== "RETIRADA") { total += 10; }
+    // Adiciona o valor dos itens
+    for (const item of itensAtualizados) {
+        total += mapeamento[item.produto].preco * item.quantidade;
+    }
+
+    // Cria um objeto com os dados atualizados
+    const pedidoAtualizado = {
+        id: id,
+        itens: itensAtualizados,
+        endereco: document.getElementById('endereco').value,
+        contato: document.getElementById('contato').value,
+        total: total
+    };
+
+    // Envia os dados atualizados para a API
+    await fetch('/manejar_pedidos', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pedidoAtualizado)
+    });
+
+    // Recarrega a tabela para mostrar a mudança
+    carregarTabela();
 }
