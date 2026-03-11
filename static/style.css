@@ -1,0 +1,106 @@
+/* Variáveis Universais pro Tema "Clean" */
+:root {
+  --bg-color: #fcfcfc;
+  --text-color: #333333;
+  --border-color: #cccccc;
+  --primary-color: #2b7a78;
+  --primary-hover: #3aafa9;
+}
+
+/* O Segredo do "Minimalismo Bonito" é usar a fonte do sistema e controlar a largura */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+/* Deixa os títulos sutilmente mais suaves (não 100% pretos) */
+h1, h2, h3 {
+  color: #111111;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Blindagem nos Inputs: Mesma largura e bordas arredondadas simples */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+input[readonly] {
+  background-color: #eeeeee;
+  color: #666666;
+  border-style: dashed;
+}
+
+/* Um botão "clicável" e profissional mas não escandaloso */
+button, input[type="button"] {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+
+button:hover, input[type="button"]:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Tabela Profissional sem perder a estrutura básica */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+}
+
+/* Suavizando as divs que são caixas proeminentes */
+#editar_pedido, #receber, #sacola_de_compras {
+  background: white;
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  margin-bottom: 20px;
+}
+
+/* Botões da Tabela (Lápis e Lixeira) mais neutros */
+#pedidos button {
+  padding: 5px 8px;
+  font-size: 0.9rem;
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+#pedidos button:hover {
+  background-color: #eeeeee;
+}

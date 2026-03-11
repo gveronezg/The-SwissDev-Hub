@@ -4,6 +4,8 @@ import json
 
 def rodar_query(query, parms=(), retorno=False):
     with sqlite3.connect('pedidos.db') as con:
+        if retorno:
+            con.row_factory = sqlite3.Row
         cur = con.cursor()
         cur.execute(query, parms)
 
@@ -46,15 +48,15 @@ def read_all_pedidos():
     """
     query = "SELECT * FROM pedidos"
     rows = rodar_query(query, retorno=True)
-    # Convertendo os resultados para uma lista de dicionários para facilitar o uso
+    # Convertendo os resultados usando os nomes das colunas
     pedidos = []
     for row in rows:
         pedidos.append({
-            'id': row[0],
-            'itens': json.loads(row[1]),  # Convertendo JSON de volta para dicionário
-            'endereco': row[2],
-            'contato': row[3],
-            'total': row[4]
+            'id': row['id'],
+            'itens': json.loads(row['itens']),  # Convertendo JSON de volta para dicionário
+            'endereco': row['endereco'],
+            'contato': row['contato'],
+            'total': row['total']
         })
     return pedidos
 
