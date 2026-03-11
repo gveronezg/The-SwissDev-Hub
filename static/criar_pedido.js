@@ -9,10 +9,18 @@ const itensAdicionados = document.getElementById('itens_adicionados');
 const btnEnviar = document.getElementById('btnEnviar');
 const retirar = document.getElementById('entrega_off');
 
+let precosOficiais = {};
+
 const mapeamento = {
-    "Batata de Costela": { qtdId: "qtd-costela", totalId: "total-costela", preco: 40.0 },
-    "Batata de Frango": { qtdId: "qtd-frango", totalId: "total-frango", preco: 35.0 }
+    "Batata de Costela": { qtdId: "qtd-costela", totalId: "total-costela" },
+    "Batata de Frango": { qtdId: "qtd-frango", totalId: "total-frango" }
 };
+
+async function iniciarSite() {
+    const resposta = await fetch('/');
+    precosOficiais = await resposta.json();
+}
+iniciarSite();
 
 diminuir.addEventListener('click', () => {
     if (quantidade.value > 0) {
@@ -37,7 +45,7 @@ adicionar.addEventListener('click', () => {
     document.getElementById(idDaSpan).innerText = quantidade.value;
 
     // 4. Atualiza o total
-    document.getElementById(mapeamento[produtoSelecionado].totalId).innerHTML = mapeamento[produtoSelecionado].preco * quantidade.value;
+    document.getElementById(mapeamento[produtoSelecionado].totalId).innerHTML = precosOficiais[produtoSelecionado] * quantidade.value;
 });
 
 retirar.addEventListener('click', () => {
@@ -58,7 +66,7 @@ btnEnviar.onclick = async () => {
         let qtd = parseInt(document.getElementById(mapeamento[nomeProduto].qtdId).innerText);
         if (qtd > 0) {
             // somar o valor total deste item ao total do pedido
-            totalDoPedido += (mapeamento[nomeProduto].preco * qtd)
+            totalDoPedido += (precosOficiais[nomeProduto] * qtd)
             // adiciona o item ao pedido
             itensDoPedido.push({ produto: nomeProduto, quantidade: parseInt(qtd) })
         }

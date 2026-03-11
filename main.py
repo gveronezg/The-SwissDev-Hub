@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from models import Pedido
 from fastapi.staticfiles import StaticFiles
@@ -11,6 +11,21 @@ from httpx import post
 load_dotenv()
 URL_DISCORD = os.getenv("URL_DISCORD_WEBHOOK")
 
+import json
+texto_catalogo = os.getenv("CATALOGO", "{}")
+PRECOS_OFICIAIS = json.loads(texto_catalogo)
+
+
+def calcular_total(pedido: Pedido) -> float:
+    total = 0.0
+    if pedido.endereco.upper() != "RETIRADA":
+        total += 10.0
+    for item in pedido.itens:
+        preco_unitario = PRECOS_OFICIAIS.get(item.produto, 0.0)
+        total += preco_unitario * item.quantidade
+    return total
+
+
 app = FastAPI()
 
 # Monta a pasta 'static' para servir arquivos estáticos
@@ -18,8 +33,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")
-def raiz():
-    return "Você esta na raiz da API."
+def iniciar_vendas():
+    """ Rota pública para os scripts JS saberem a tabela de preços do dia """
+    return PRECOS_OFICIAIS
 
 
 @app.get("/pedido")
@@ -46,12 +62,14 @@ def buscar_todos_pedidos():
         pedidos = read_all_pedidos()
         return {"pedidos": pedidos}
     except Exception as e:
-        print(f"Erro ao buscar pedidos: {e}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/pedido")
 def lancar_pedido(pedido: Pedido):
+    # BLINDAGEM: Recalcula o total de forma segura no servidor
+    pedido.total = calcular_total(pedido)
+
     # Crie o texto dos itens primeiro
     texto_itens = ""
     for item in pedido.itens:
@@ -72,18 +90,21 @@ def lancar_pedido(pedido: Pedido):
         query, dados = registrar_pedido(pedido.model_dump())
         rodar_query(query, dados)
     except Exception as e:
-        print(f"Erro ao processar pedido: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     return pedido
 
 
 @app.put("/manejar_pedidos")
 def atualizar_pedido(pedido: Pedido):
+    # BLINDAGEM: Recalcula o total de forma segura no servidor
+    pedido.total = calcular_total(pedido)
+
     try:
         query, dados = update_pedido(pedido.model_dump())
         rodar_query(query, dados)
     except Exception as e:
-        print(f"Erro ao atualizar pedido: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     return pedido
 
@@ -95,7 +116,7 @@ def deletar_pedido(pedido_id: int):
         rodar_query(query, dados)
         return {"status": "sucesso"}
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

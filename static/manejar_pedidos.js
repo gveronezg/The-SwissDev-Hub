@@ -46,8 +46,18 @@ async function carregarTabela() {
     });
 }
 
+// Memória global limpa para os preços oficiais
+let precosOficiais = {};
+
 // 3. Roda a função assim que carregar
-carregarTabela();
+async function iniciarSite() {
+    const resposta = await fetch('/');
+    precosOficiais = await resposta.json();
+
+    carregarTabela();
+}
+
+iniciarSite();
 
 // 4. Função para excluir
 async function excluirPedido(id) {
@@ -94,15 +104,10 @@ async function editarPedido(id) {
     }
 }
 
-const mapeamento = {
-    "Batata de Costela": { qtdId: "qtd-costela", totalId: "total-costela", preco: 40.0 },
-    "Batata de Frango": { qtdId: "qtd-frango", totalId: "total-frango", preco: 35.0 }
-};
-
 // 6. Função para atualizar o bd
 async function atualizarPedido() {
     // Obtem o id do pedido
-    const id = document.getElementById('id').value;
+    const id = parseInt(document.getElementById('id').value);
 
     // Obtem todas as quantidades e itens atualizados
     const qtds = document.querySelectorAll('#itens_do_pedido input[type="number"]');
@@ -117,22 +122,13 @@ async function atualizarPedido() {
         });
     }
 
-    let total = 0;
-    // Adiciona o valor da taxa de entrega se o endereço não for "RETIRADA"
-    const entrega = document.getElementById('endereco');
-    if (entrega.value !== "RETIRADA") { total += 10; }
-    // Adiciona o valor dos itens
-    for (const item of itensAtualizados) {
-        total += mapeamento[item.produto].preco * item.quantidade;
-    }
-
     // Cria um objeto com os dados atualizados
     const pedidoAtualizado = {
         id: id,
         itens: itensAtualizados,
         endereco: document.getElementById('endereco').value,
         contato: document.getElementById('contato').value,
-        total: total
+        total: 0 // O Python vai calcular o valor real ignorando este campo!
     };
 
     // Envia os dados atualizados para a API
