@@ -42,12 +42,12 @@ def registrar_pedido(pedido_dict):
     return query, (itens_json, pedido_dict['endereco'], pedido_dict['contato'], pedido_dict['total'])
 
 
-def read_all_pedidos():
+def read_all_pedidos(limite: int, offset: int):
     """
-    Busca todos os pedidos registrados no banco de dados.
+    Busca os pedidos paginados, limitados, e ordenados do mais recente pro mais antigo.
     """
-    query = "SELECT * FROM pedidos"
-    rows = rodar_query(query, retorno=True)
+    query = "SELECT * FROM pedidos ORDER BY id DESC LIMIT ? OFFSET ?"
+    rows = rodar_query(query, (limite, offset), retorno=True)
     # Convertendo os resultados usando os nomes das colunas
     pedidos = []
     for row in rows:

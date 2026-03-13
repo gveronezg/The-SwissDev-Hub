@@ -18,6 +18,7 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
     *   Desenvolvimento de rotas de leitura (Read) , atualização (Update) e exclusão (Delete) seguindo o padrão RESTful.
     *   Aplicação do conceito de **Single Source of Truth (SSOT)**, centralizando regras de negócio e preços na API.
     *   Validação rigorosa e **recálculo de valores financeiros** no servidor para evitar manipulação de dados (*Payload Tampering*).
+    *   Implementação de Autenticação utilizando o protocolo nativo **HTTP Basic Auth**, protegendo rotas administrativas.
 
 *   **Persistência (SQLite):** 
     *   Implementação de banco de dados relacional com **SQL parametrizado** (blindagem contra SQL Injection).
@@ -28,6 +29,7 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
     *   Isolamento de credenciais sensíveis (Webhooks) em variáveis de ambiente.
     *   Uso da biblioteca `python-dotenv` para carregamento dinâmico de configurações.
     *   Armazenamento do catálogo de preços estruturado como JSON no cofre (`.env`), facilitando atualizações ágeis sem recompilar código.
+    *   Uso da biblioteca `secrets` nativa do Python para comparação segura de strings (prevenção contra **Timing Attacks**).
 
 *   **Integração (Discord Webhook):** 
     *   Mensageria automatizada via requisições HTTP assíncronas (**HTTPX**).
@@ -38,6 +40,7 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
 *   **Tratamento de Exceções:** Uso de blocos `try/except` para garantir a resiliência da API em casos de falhas externas.
 *   **Acesso por Path Parameters:** Uso de rotas RESTful com IDs na URL para operações precisas de deleção (ex: `/pedidos/{id}`).
 *   **Prevenção de Payload Tampering:** Recálculo cego de totais financeiros em backend ignorando origens não confiáveis de frontend.
+*   **Fail Fast (Falha Rápida):** A aplicação quebra a execução durante a inicialização (Erro Crítico) caso as credenciais obrigatórias não tenham sido configuradas no Ambiente, prevenindo instabilidades no faturamento.
 *   **Single Source of Truth (SSOT):** O frontend obtém configurações (preços) na inicialização ao invés de utilizar dicionários *hardcoded*.
 *   **Princípio SRP (Responsabilidade Única):** Separação rigorosa de scripts por funcionalidade (`criar_pedido.js` vs `manejar_pedidos.js`) para evitar acoplamento.
 *   **API Decoupled:** Separação total entre a entrega do visual (HTML) e os dados (JSON), permitindo escalabilidade para futuros apps mobile.

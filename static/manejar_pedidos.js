@@ -1,10 +1,14 @@
 let pedidosSalvos = [];
 
+// Estados da paginação:
+let offsetAtual = 0;
+const limitePadrao = 5;
+
 // 1. Função que busca os dados da API no BD
 async function carregarTabela() {
 
-    // Roda a função da rota /manejar_pedidos que vai chamar a função do banco de dados e obter os dados
-    const resposta = await fetch('/manejar_pedidos');
+    // Nós injetamos os Query Params dinamicamente na URL de Fetch
+    const resposta = await fetch(`/manejar_pedidos?offset=${offsetAtual}&limite=${limitePadrao}`);
     // Absorvando apenas o corpo json da resposta
     const dados = await resposta.json();
     // Fragmentando o json para obter uma lista com cada pedido
@@ -27,7 +31,6 @@ async function carregarTabela() {
 
         // Criando uma linha para cada pedido
         const linha = document.createElement("tr");
-
         // Criando as colunas com os dados
         linha.innerHTML = `
             <td>${pedido.id}</td>
@@ -40,10 +43,32 @@ async function carregarTabela() {
                 <button onclick="excluirPedido(${pedido.id})">🗑️</button>
             </td>
         `;
-
         // Adicionando a linha na tabela
         corpoTabela.appendChild(linha);
     });
+
+    // Atualiza a UI da Paginação
+    const btnVoltar = document.getElementById("btn-voltar");
+    const btnAvancar = document.getElementById("btn-avancar");
+    const indicador = document.getElementById("indicador-pagina");
+    // Trava o Voltar se estamos na primeira página (offset = 0)
+    btnVoltar.disabled = (offsetAtual === 0);
+    // Trava o Avançar se não temos mais limite preenchido
+    btnAvancar.disabled = (listaDePedidos.length < limitePadrao);
+
+    // Mostrando o número da página visualmente: (0/10) + 1 = Pagina 1
+    indicador.innerText = `Página ${(offsetAtual / limitePadrao) + 1}`;
+}
+// Controladores dos botões HTML
+function proximaPagina() {
+    offsetAtual += limitePadrao;
+    carregarTabela();
+}
+function paginaAnterior() {
+    if (offsetAtual >= limitePadrao) {
+        offsetAtual -= limitePadrao;
+        carregarTabela();
+    }
 }
 
 // Memória global limpa para os preços oficiais

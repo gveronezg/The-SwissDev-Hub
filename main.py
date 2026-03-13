@@ -1,5 +1,5 @@
 import secrets
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.responses import HTMLResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from models import Pedido
@@ -75,12 +75,18 @@ def visualizar_pedidos(admin_username: str = Depends(verificar_credenciais)):
 
 
 @app.get("/manejar_pedidos")
-def buscar_todos_pedidos(admin_username: str = Depends(verificar_credenciais)):
+def buscar_todos_pedidos(
+    admin_username: str = Depends(verificar_credenciais),
+    # aqui definimos os parametros que serão enviados na URL
+    limite: int = Query(5, ge=1, le=100, description="Quantidade de pedidos a serem buscados"),
+    # o offset é a quantidade de pedidos a serem pulados, para que possamos buscar os pedidos seguintes
+    offset: int = Query(0, ge=0, description="Quantidade de pedidos a serem pulados")
+):
     """
     Endpoint para buscar todos os pedidos registrados no banco de dados.
     """
     try:
-        pedidos = read_all_pedidos()
+        pedidos = read_all_pedidos(limite, offset)
         return {"pedidos": pedidos}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
