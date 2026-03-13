@@ -34,7 +34,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 def iniciar_vendas():
-    """ Rota pública para os scripts JS saberem a tabela de preços do dia """
+    """ Tela raiz do sistema com os preços dos produtos disponiveis """
     return PRECOS_OFICIAIS
 
 
