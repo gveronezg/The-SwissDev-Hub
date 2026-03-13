@@ -1,5 +1,7 @@
-from fastapi import FastAPI, HTTPException
+import secrets
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from models import Pedido
 from fastapi.staticfiles import StaticFiles
 from database import iniciar_db, rodar_query, registrar_pedido, read_all_pedidos, update_pedido, delete_pedido
@@ -10,6 +12,10 @@ from dotenv import load_dotenv
 from httpx import post
 load_dotenv()
 URL_DISCORD = os.getenv("URL_DISCORD_WEBHOOK")
+
+security = HTTPBasic()
+USUARIO_ADM = os.getenv("ADMIN_USER", "admin")
+SENHA_ADM = os.getenv("ADMIN_PASSWORD", "secreta")
 
 import json
 texto_catalogo = os.getenv("CATALOGO", "{}")
@@ -32,6 +38,19 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
+def verificar_credenciais(credenciais: HTTPBasicCredentials = Depends(security)):
+    """ Verifica se o usuário e senha coincidem com os do .env """
+    usuario_certo = secrets.compare_digest(credenciais.username, USUARIO_ADM)
+    senha_certa = secrets.compare_digest(credenciais.password, SENHA_ADM)
+    if not (usuario_certo and senha_certa):
+        raise HTTPException(
+            status_code=401,
+            detail="Credenciais inválidas",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credenciais.username
+
+
 @app.get("/")
 def iniciar_vendas():
     """ Tela raiz do sistema com os preços dos produtos disponiveis """
@@ -47,14 +66,14 @@ def criar_pedido():
 
 
 @app.get("/pedidos")
-def visualizar_pedidos():
+def visualizar_pedidos(admin_username: str = Depends(verificar_credenciais)):
     with open("static/manejar_pedidos.html", "r", encoding="utf-8") as html:
         conteudo = html.read()
         return HTMLResponse(content=conteudo)
 
 
 @app.get("/manejar_pedidos")
-def buscar_todos_pedidos():
+def buscar_todos_pedidos(admin_username: str = Depends(verificar_credenciais)):
     """
     Endpoint para buscar todos os pedidos registrados no banco de dados.
     """
@@ -96,7 +115,7 @@ def lancar_pedido(pedido: Pedido):
 
 
 @app.put("/manejar_pedidos")
-def atualizar_pedido(pedido: Pedido):
+def atualizar_pedido(pedido: Pedido, admin_username: str = Depends(verificar_credenciais)):
     # BLINDAGEM: Recalcula o total de forma segura no servidor
     pedido.total = calcular_total(pedido)
 
@@ -110,7 +129,7 @@ def atualizar_pedido(pedido: Pedido):
 
 
 @app.delete("/manejar_pedidos/{pedido_id}")
-def deletar_pedido(pedido_id: int):
+def deletar_pedido(pedido_id: int, admin_username: str = Depends(verificar_credenciais)):
     try:
         query, dados = delete_pedido({"id": pedido_id}) 
         rodar_query(query, dados)
