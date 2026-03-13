@@ -10,6 +10,7 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
     *   Comunicação assíncrona com a API utilizando a **Fetch API**.
     *   Criação de Dashboards Administrativos isolados para gestão e monitoramento de pedidos.
     *   Uso de funções de alta ordem (Map/Join) para transformar dados complexos em interfaces legíveis.
+    *   Gestão de Estado (State Management) para controles dinâmicos de paginação assíncrona na Interface.
 
 *   **Backend (FastAPI):** 
     *   Criação de API RESTful de alta performance com tipagem rigorosa via **Pydantic**.
@@ -19,11 +20,13 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
     *   Aplicação do conceito de **Single Source of Truth (SSOT)**, centralizando regras de negócio e preços na API.
     *   Validação rigorosa e **recálculo de valores financeiros** no servidor para evitar manipulação de dados (*Payload Tampering*).
     *   Implementação de Autenticação utilizando o protocolo nativo **HTTP Basic Auth**, protegendo rotas administrativas.
+    *   Uso de validação de parâmetros de requisição via **FastAPI Query**, barrando volumes abusivos de chamadas de dados.
 
 *   **Persistência (SQLite):** 
     *   Implementação de banco de dados relacional com **SQL parametrizado** (blindagem contra SQL Injection).
     *   Uso de Gerenciadores de Contexto (`with`) para garantir integridade de conexões e memória.
     *   Tratamento de dados complexos (listas) via serialização **JSON**.
+    *   Paginação otimizada com controle de **LIMIT** e **OFFSET**, aliado à ordenação na extração temporal dos dados (ORDER BY).
 
 *   **Segurança & Configuração (Dotenv):** 
     *   Isolamento de credenciais sensíveis (Webhooks) em variáveis de ambiente.
@@ -40,6 +43,7 @@ Este projeto consolida o domínio de tecnologias modernas e práticas de arquite
 *   **Tratamento de Exceções:** Uso de blocos `try/except` para garantir a resiliência da API em casos de falhas externas.
 *   **Acesso por Path Parameters:** Uso de rotas RESTful com IDs na URL para operações precisas de deleção (ex: `/pedidos/{id}`).
 *   **Prevenção de Payload Tampering:** Recálculo cego de totais financeiros em backend ignorando origens não confiáveis de frontend.
+*   **Defensive Programming (Prevenção DoS):** Proteção sistemática contra *Out of Memory* no banco e servidor aplicando paginação obrigatória e validação estrita (`ge=1, le=100`) via *FastAPI Query*, cortando requisições abusivas antecipadamente com HTTP 422.
 *   **Fail Fast (Falha Rápida):** A aplicação quebra a execução durante a inicialização (Erro Crítico) caso as credenciais obrigatórias não tenham sido configuradas no Ambiente, prevenindo instabilidades no faturamento.
 *   **Single Source of Truth (SSOT):** O frontend obtém configurações (preços) na inicialização ao invés de utilizar dicionários *hardcoded*.
 *   **Princípio SRP (Responsabilidade Única):** Separação rigorosa de scripts por funcionalidade (`criar_pedido.js` vs `manejar_pedidos.js`) para evitar acoplamento.
