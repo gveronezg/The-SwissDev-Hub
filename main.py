@@ -11,15 +11,17 @@ import os
 from dotenv import load_dotenv
 from httpx import post
 load_dotenv()
-URL_DISCORD = os.getenv("URL_DISCORD_WEBHOOK")
+URL_DISCORD_WEBHOOK = os.getenv("URL_DISCORD_WEBHOOK")
 
 security = HTTPBasic()
-USUARIO_ADM = os.getenv("ADMIN_USER", "admin")
-SENHA_ADM = os.getenv("ADMIN_PASSWORD", "secreta")
-
+ADMIN_USER = os.getenv("ADMIN_USER")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 import json
-texto_catalogo = os.getenv("CATALOGO", "{}")
-PRECOS_OFICIAIS = json.loads(texto_catalogo)
+CATALOGO = os.getenv("CATALOGO")
+PRECOS_OFICIAIS = json.loads(CATALOGO)
+# Impedimos o servidor de iniciar se não encontrarmos o .env com as credenciais obrigatórias
+if not URL_DISCORD_WEBHOOK or not ADMIN_USER or not ADMIN_PASSWORD or not CATALOGO:
+    raise RuntimeError("ERRO CRÍTICO: As credenciais obrigatórias não foram definidas no .env!")
 
 
 def calcular_total(pedido: Pedido) -> float:
@@ -40,8 +42,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 def verificar_credenciais(credenciais: HTTPBasicCredentials = Depends(security)):
     """ Verifica se o usuário e senha coincidem com os do .env """
-    usuario_certo = secrets.compare_digest(credenciais.username, USUARIO_ADM)
-    senha_certa = secrets.compare_digest(credenciais.password, SENHA_ADM)
+    usuario_certo = secrets.compare_digest(credenciais.username, ADMIN_USER)
+    senha_certa = secrets.compare_digest(credenciais.password, ADMIN_PASSWORD)
     if not (usuario_certo and senha_certa):
         raise HTTPException(
             status_code=401,
@@ -104,7 +106,7 @@ def lancar_pedido(pedido: Pedido):
 **TOTAL:** R$ {pedido.total:.2f}
 """
         # Envie na "caixa" que o Discord entende
-        post(URL_DISCORD, json={"content": mensagem_para_discord})
+        post(URL_DISCORD_WEBHOOK, json={"content": mensagem_para_discord})
 
         query, dados = registrar_pedido(pedido.model_dump())
         rodar_query(query, dados)
