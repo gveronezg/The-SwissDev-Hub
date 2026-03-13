@@ -9,3 +9,6 @@ httpx
 
 # python-dotenv é usado para carregar variáveis de ambiente externas ao código
 python-dotenv
+
+# usado para testar a API por requisições HTTP
+pytest
